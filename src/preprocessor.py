@@ -9,7 +9,7 @@ from sklearn.impute import KNNImputer, SimpleImputer, IterativeImputer
 
 from src.preprocessing import COL_FREQUENCY_CONTINUOUS
 
-PROBLEM_TYPE = "regression"
+PROBLEM_TYPE = pd.read_json("options/build_options.json")["problem_types"]["default"]
 COL_FREQUENCY_CONTINUOUS = 10
 
 class preprocessor:
@@ -51,15 +51,16 @@ class preprocessor:
 
         categorical_pipeline = Pipeline(
         [
-        ('imputer_cat', KNNImputer()),
-        ('onehot', OneHotEncoder(handle_unknown = 'ignore'))
+            ('imputer_cat', KNNImputer()),
+            ('onehot', OneHotEncoder(handle_unknown = 'ignore'))
         ]
         )
         self.preprocessor = ColumnTransformer(
         [
-        ('categoricals', categorical_pipeline, self.__cat_cols),
-        ('numericals', numeric_pipeline, self.__num_cols)
+            ('categoricals', categorical_pipeline, self.__cat_cols),
+            ('numericals', numeric_pipeline, self.__num_cols)
         ],
         )
+        
         return self.preprocessor
 

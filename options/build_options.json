@@ -1,0 +1,3 @@
+{
+    "problem_types":{"0":"regression","1": "classification", "2":"clustering", "default":"regression"},
+}
