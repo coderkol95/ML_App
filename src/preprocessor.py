@@ -7,8 +7,6 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, L
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import KNNImputer, SimpleImputer, IterativeImputer
 
-from src.preprocessing import COL_FREQUENCY_CONTINUOUS
-
 PROBLEM_TYPE = pd.read_json("options/build_options.json")["problem_types"]["default"]
 COL_FREQUENCY_CONTINUOUS = 10
 
@@ -34,25 +32,25 @@ class preprocessor:
 
     def pipeline(
         self,
-        # numeric_imputer,
-        # categorical_imputer,
-        # numeric_scaler,
-        # categorical_encoder
+        numeric_imputer,
+        categorical_imputer,
+        numeric_scaler,
+        categorical_encoder
         ):
 
         self.split()
 
         numeric_pipeline = Pipeline(
         [
-            ('imputer_num', KNNImputer()),
-            ('scaler', StandardScaler())
+            ('imputer_num', numeric_imputer),
+            ('scaler', numeric_scaler)
         ]
         )
 
         categorical_pipeline = Pipeline(
         [
-            ('imputer_cat', KNNImputer()),
-            ('onehot', OneHotEncoder(handle_unknown = 'ignore'))
+            ('imputer_cat', categorical_imputer),
+            ('onehot', categorical_encoder)
         ]
         )
         self.preprocessor = ColumnTransformer(
