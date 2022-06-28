@@ -10,7 +10,7 @@ from sklearn.impute import KNNImputer, SimpleImputer, IterativeImputer
 PROBLEM_TYPE = pd.read_json("options/build_options.json")["problem_types"]["default"]
 COL_FREQUENCY_CONTINUOUS = 10
 
-class preprocessor:
+class preprocessor():
 
     def __init__(self, X, y):
 
@@ -30,35 +30,58 @@ class preprocessor:
         elif problem_type == "classification":
             self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size=test_pct, shuffle=True, random_state=42, stratify = y)
 
-    def pipeline(
+    def fit(
         self,
         numeric_imputer,
         categorical_imputer,
         numeric_scaler,
-        categorical_encoder
-        ):
+        categorical_encoder):
 
-        self.split()
-
-        numeric_pipeline = Pipeline(
+        self.numeric_pipeline = Pipeline(
         [
             ('imputer_num', numeric_imputer),
             ('scaler', numeric_scaler)
         ]
         )
 
-        categorical_pipeline = Pipeline(
+        self.categorical_pipeline = Pipeline(
         [
             ('imputer_cat', categorical_imputer),
             ('onehot', categorical_encoder)
         ]
         )
-        self.preprocessor = ColumnTransformer(
+        self.preprocessor_pipe = ColumnTransformer(
         [
-            ('categoricals', categorical_pipeline, self.__cat_cols),
-            ('numericals', numeric_pipeline, self.__num_cols)
+            ('categoricals', self.categorical_pipeline, self.__cat_cols),
+            ('numericals', self.numeric_pipeline, self.__num_cols)
         ],
         )
+        self.preprocessor_pipe.fit(self.X_train)
+
+    def fit_transform(
+        self,
+        X,
+        numeric_imputer = None,
+        categorical_imputer = None,
+        numeric_scaler = None,
+        categorical_encoder = None):
+
+        if numeric_imputer == None or categorical_encoder == None or numeric_scaler == None or categorical_encoder == None:
+
+            if self.preprocessor_pipe is None:
+                raise ValueError("Please fit the pipeline first or pass the necessary values")
+
+            else:
+                return self.preprocessor_pipe.transform(X)
         
-        return self.preprocessor
+        else:
+            
+            self.fit(numeric_imputer, categorical_imputer, numeric_scaler, categorical_encoder)
+            return self.preprocessor_pipe.transform(X)
+
+    def transform(self, X):
+
+        return self.preprocessor_pipe.transform(X)
+
+
 
