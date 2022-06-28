@@ -3,9 +3,6 @@ import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, LabelEncoder
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.impute import KNNImputer, SimpleImputer, IterativeImputer
 
 PROBLEM_TYPE = pd.read_json("options/build_options.json")["problem_types"]["default"]
 COL_FREQUENCY_CONTINUOUS = 10
@@ -68,11 +65,11 @@ class preprocessor():
 
         if numeric_imputer == None or categorical_encoder == None or numeric_scaler == None or categorical_encoder == None:
 
-            if self.preprocessor_pipe is None:
-                raise ValueError("Please fit the pipeline first or pass the necessary values")
+            if hasattr(self, 'preprocessor_pipe'):
+                return self.preprocessor_pipe.transform(X)
 
             else:
-                return self.preprocessor_pipe.transform(X)
+                raise ValueError("Please fit the pipeline first or pass the necessary values.")
         
         else:
             
@@ -81,7 +78,12 @@ class preprocessor():
 
     def transform(self, X):
 
-        return self.preprocessor_pipe.transform(X)
+        if hasattr(self, 'preprocessor_pipe'):
+            return self.preprocessor_pipe.transform(X)
+        
+        else:
+            raise ValueError("Please fit the pipeline first.")
+        
 
 
 
