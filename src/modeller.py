@@ -4,7 +4,6 @@ from hyperopt import hp, fmin, tpe, Trials, STATUS_OK
 from hyperopt.pyll import scope
 from sklearn.model_selection import StratifiedKFold, KFold
 from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import LinearRegression
 
 PROBLEM_TYPE = pd.read_json("options/build_options.json")["problem_types"]["default"]
 

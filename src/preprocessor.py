@@ -34,6 +34,8 @@ class preprocessor():
         numeric_scaler,
         categorical_encoder):
 
+        self.split()
+
         self.numeric_pipeline = Pipeline(
         [
             ('imputer_num', numeric_imputer),
@@ -57,7 +59,6 @@ class preprocessor():
 
     def fit_transform(
         self,
-        X,
         numeric_imputer = None,
         categorical_imputer = None,
         numeric_scaler = None,
@@ -66,7 +67,7 @@ class preprocessor():
         if numeric_imputer == None or categorical_encoder == None or numeric_scaler == None or categorical_encoder == None:
 
             if hasattr(self, 'preprocessor_pipe'):
-                return self.preprocessor_pipe.transform(X)
+                self.preprocessor_pipe.transform(self.X_train)
 
             else:
                 raise ValueError("Please fit the pipeline first or pass the necessary values.")
@@ -74,12 +75,12 @@ class preprocessor():
         else:
             
             self.fit(numeric_imputer, categorical_imputer, numeric_scaler, categorical_encoder)
-            return self.preprocessor_pipe.transform(X)
+            self.preprocessor_pipe.transform(self.X_train)
 
-    def transform(self, X):
+    def transform(self):
 
         if hasattr(self, 'preprocessor_pipe'):
-            return self.preprocessor_pipe.transform(X)
+            return self.preprocessor_pipe.transform(self.X_test)
         
         else:
             raise ValueError("Please fit the pipeline first.")

@@ -39,7 +39,7 @@ encoding_params = {
 imputation_params = {
     "SimpleImputer":{
                     "missing_values":[np.nan, "?"][0],
-                    "strategy":["mean", "median", "most_frequent", "constant"][0],
+                    "strategy":["mean", "median", "most_frequent", "constant"][1],
                     "fill_value": None
                     },
     "IterativeImputer":{
@@ -61,17 +61,17 @@ imputation_params = {
 
 preprocessing_opts = {   
     "scaling":{
-                "MinMaxScaler":MinMaxScaler(), 
-                "StandardScaler":StandardScaler()
+                "MinMaxScaler":MinMaxScaler().set_params(**scaling_params['MinMaxScaler']), 
+                "StandardScaler":StandardScaler().set_params(**scaling_params['StandardScaler'])
                 },
     "encoding":{
-                "OneHotEncoder":OneHotEncoder(), 
-                "OrdinalEncoder":OrdinalEncoder()
+                "OneHotEncoder":OneHotEncoder().set_params(**encoding_params['OneHotEncoder']), 
+                "OrdinalEncoder":OrdinalEncoder().set_params(**encoding_params['OrdinalEncoder'])
                 },
     "imputation":{
-                "SimpleImputer":SimpleImputer(),
-                "IterativeImputer":IterativeImputer(), 
-                "KNNImputer":KNNImputer()
+                "SimpleImputer":SimpleImputer().set_params(**imputation_params['SimpleImputer']),
+                "IterativeImputer":IterativeImputer().set_params(**imputation_params['IterativeImputer']), 
+                "KNNImputer":KNNImputer().set_params(**imputation_params['KNNImputer'])
                 }
 }
 
@@ -85,9 +85,15 @@ ml_algos = {
     "DecisionTreeRegressor" : DecisionTreeRegressor()
 }
 
-
-    #Hyperparameters to be tuned
-param_space_GradientBoostingRegressor =  {
-            'learning_rate': hp.uniform('learning_rate',0.01,1),
-            'n_estimators': scope.int(hp.quniform('n_estimators',10,500,1))
-    }
+param_spaces ={
+"GradientBoostingRegressor" :  
+                            {
+                                'learning_rate': hp.uniform('learning_rate',0.01,1),
+                                'n_estimators': scope.int(hp.quniform('n_estimators',10,500,1))
+                            },
+"LinearRegression" : 
+                    {
+                    'fit_intercept':hp.choice('fit_intercept',[True, False]),
+                    'positive':hp.choice('positive',[True, False])
+                    }
+}
