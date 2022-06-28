@@ -1,7 +1,16 @@
+from re import M
+import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler,OneHotEncoder, OrdinalEncoder
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import KNNImputer, SimpleImputer, IterativeImputer
-import numpy as np
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier, RandomForestClassifier, RandomForestRegressor
+from hyperopt import hp, fmin, tpe, Trials, STATUS_OK
+from hyperopt.pyll import scope
+
 
 scaling_params = {
     "MinMaxScaler":{
@@ -65,3 +74,20 @@ preprocessing_opts = {
                 "KNNImputer":KNNImputer()
                 }
 }
+
+ml_algos = {
+    "LinearRegression" : LinearRegression(),
+    "LogisticRegression" : LogisticRegression(),
+    "KNeighborsClassifier" : KNeighborsClassifier(),
+    "KNeighborsRegressor" : KNeighborsRegressor(),
+    "GaussianNB" : GaussianNB(),
+    "DecisionTreeClassifier" : DecisionTreeClassifier(),
+    "DecisionTreeRegressor" : DecisionTreeRegressor()
+}
+
+
+    #Hyperparameters to be tuned
+param_space_GradientBoostingRegressor =  {
+            'learning_rate': hp.uniform('learning_rate',0.01,1),
+            'n_estimators': scope.int(hp.quniform('n_estimators',10,500,1))
+    }
